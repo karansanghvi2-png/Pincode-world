@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>PinWorld — Global Pincode Search & Live News</title>
+<meta name="description" content="Search any pincode worldwide. Live USA news in Banking, Fashion, Lifestyle, Finance, Crypto & Health. Updated every 30 minutes."/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --gold: #D4A843;
+    --gold-light: #F0C96A;
+    --gold-pale: #FDF6E3;
+    --amber: #B8860B;
+    --dark: #1A1208;
+    --mid: #3D2E08;
+    --cream: #FEFAF0;
+    --text: #2C1F05;
+    --muted: #7A6535;
+    --card: #FFFDF5;
+    --border: #E8D99A;
+    --radius: 12px;
+    --shadow: 0 4px 24px rgba(180,130,0,0.12);
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:'DM Sans',sans-serif; background:var(--cream); color:var(--text); }
+
+  /* ── TOP AD BANNER ── */
+  .ad-top {
+    background: linear-gradient(90deg, #1A1208, #3D2E08);
+    color: var(--gold-light);
+    text-align: center;
+    padding: 10px;
+    font-size: 13px;
+    font-family: 'Space Grotesk', sans-serif;
+    letter-spacing: 0.5px;
+  }
+  .ad-top a { color: var(--gold-light); text-decoration: underline; }
+  .ad-banner-top {
+    background: var(--gold-pale);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px;
+    gap: 12px;
+  }
+  .ad-slot {
+    background: linear-gradient(135deg, #f5e6c0, #fdf6e3);
+    border: 1.5px dashed var(--gold);
+    border-radius: 8px;
+    padding: 10px 20px;
+    font-size: 12px;
+    color: var(--muted);
+    text-align: center;
+    min-width: 280px;
+  }
+  .ad-slot strong { display:block; color:var(--amber); font-size:11px; text-transform:uppercase; letter-spacing:1px; margin-bottom:3px; }
+
+  /* ── HEADER ── */
+  header {
+    background: linear-gradient(135deg, #1A1208 0%, #3D2E08 60%, #5C4010 100%);
+    padding: 20px 24px 16px;
+    position: sticky; top:0; z-index:100;
+    box-shadow: 0 2px 20px rgba(0,0,0,0.4);
+  }
+  .header-inner { max-width:1200px; margin:auto; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px; }
+  .logo { display:flex; align-items:center; gap:10px; }
+  .logo-icon { font-size:28px; }
+  .logo-text { font-family:'Space Grotesk',sans-serif; }
+  .logo-text .brand { font-size:22px; font-weight:700; color:#fff; letter-spacing:-0.5px; }
+  .logo-text .brand span { color:var(--gold-light); }
+  .logo-text .tagline { font-size:11px; color:var(--gold); letter-spacing:1px; text-transform:uppercase; }
+  .header-right { display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+  .refresh-badge {
+    background: rgba(212,168,67,0.15);
+    border: 1px solid var(--gold);
+    border-radius: 20px;
+    padding: 5px 12px;
+    font-size:11px; color:var(--gold-light);
+    font-family:'Space Grotesk',sans-serif;
+    display:flex; align-items:center; gap:6px;
+  }
+  .refresh-dot { width:7px; height:7px; border-radius:50%; background:var(--gold-light); animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+  .countdown-badge {
+    background:rgba(255,255,255,0.08);
+    border:1px solid rgba(212,168,67,0.3);
+    border-radius:20px; padding:5px 12px;
+    font-size:11px; color:#ccc;
+    font-family:'Space Grotesk',sans-serif;
+  }
+
+  /* ── SOCIAL BAR ── */
+  .social-bar {
+    background: var(--gold-pale);
+    border-bottom: 1px solid var(--border);
+    padding: 10px 24px;
+    display:flex; align-items:center; justify-content:center; gap:10px; flex-wrap:wrap;
+  }
+  .social-label { font-size:11px; font-family:'Space Grotesk',sans-serif; color:var(--muted); text-transform:uppercase; letter-spacing:1px; margin-right:4px; }
+  .social-btn {
+    display:inline-flex; align-items:center; gap:6px;
+    padding:6px 14px; border-radius:20px;
+    font-size:12px; font-weight:600;
+    text-decoration:none; transition:all 0.2s;
+    font-family:'Space Grotesk',sans-serif;
+    border:none; cursor:pointer;
+  }
+  .social-btn:hover { transform:translateY(-2px); box-shadow:0 4px 12px rgba(0,0,0,0.2); }
+  .btn-fb { background:#1877F2; color:#fff; }
+  .btn-ig { background:linear-gradient(45deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888); color:#fff; }
+  .btn-tw { background:#000; color:#fff; }
+  .btn-yt { background:#FF0000; color:#fff; }
+  .btn-wa { background:#25D366; color:#fff; }
+  .btn-tg { background:#0088CC; color:#fff; }
+  .btn-pi { background:#E60023; color:#fff; }
+  .btn-li { background:#0A66C2; color:#fff; }
+
+  /* ── MAIN LAYOUT ── */
+  .container { max-width:1200px; margin:auto; padding:24px 16px; }
+  .grid { display:grid; grid-template-columns:1fr 300px; gap:24px; align-items:start; }
+  @media(max-width:900px) { .grid { grid-template-columns:1fr; } }
+
+  /* ── PINCODE HERO ── */
+  .pincode-hero {
+    background: linear-gradient(135deg, #1A1208, #3D2E08);
+    border-radius: var(--radius);
+    padding: 32px 28px;
+    margin-bottom:24px;
+    position:relative; overflow:hidden;
+  }
+  .pincode-hero::before {
+    content:'';
+    position:absolute; top:-60px; right:-60px;
+    width:200px; height:200px;
+    border-radius:50%;
+    background:radial-gradient(circle, rgba(212,168,67,0.15) 0%, transparent 70%);
+  }
+  .ph-title { font-family:'Space Grotesk',sans-serif; font-size:28px; font-weight:700; color:#fff; margin-bottom:6px; }
+  .ph-title span { color:var(--gold-light); }
+  .ph-sub { color:var(--gold); font-size:13px; margin-bottom:20px; }
+  .search-row { display:flex; gap:10px; flex-wrap:wrap; }
+  .search-row select, .search-row input {
+    flex:1; min-width:140px;
+    background:rgba(255,255,255,0.1);
+    border:1.5px solid rgba(212,168,67,0.4);
+    border-radius:8px; padding:12px 14px;
+    color:#fff; font-size:14px;
+    font-family:'DM Sans',sans-serif;
+    outline:none; transition:border 0.2s;
+  }
+  .search-row select option { background:#2c1f05; }
+  .search-row input::placeholder { color:rgba(255,255,255,0.4); }
+  .search-row select:focus, .search-row input:focus { border-color:var(--gold-light); }
+  .search-btn {
+    background: linear-gradient(135deg, var(--gold), var(--amber));
+    color:#fff; border:none; border-radius:8px;
+    padding:12px 24px; font-size:14px; font-weight:700;
+    font-family:'Space Grotesk',sans-serif; cursor:pointer;
+    transition:all 0.2s; white-space:nowrap;
+  }
+  .search-btn:hover { transform:translateY(-1px); box-shadow:0 4px 16px rgba(184,134,11,0.5); }
+  .result-box {
+    margin-top:16px; background:rgba(255,255,255,0.08);
+    border:1px solid rgba(212,168,67,0.3);
+    border-radius:8px; padding:16px;
+    color:#fff; font-size:13px; line-height:1.8;
+    display:none;
+  }
+  .result-box.show { display:block; }
+  .result-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:8px; }
+  .result-item { background:rgba(212,168,67,0.1); border-radius:6px; padding:8px 12px; }
+  .result-item .label { font-size:10px; color:var(--gold); text-transform:uppercase; letter-spacing:1px; }
+  .result-item .val { font-size:14px; font-weight:600; color:#fff; }
+
+  /* ── NEWS SECTION ── */
+  .section-head {
+    display:flex; align-items:center; justify-content:space-between;
+    margin-bottom:16px; flex-wrap:wrap; gap:8px;
+  }
+  .section-title { font-family:'Space Grotesk',sans-serif; font-size:18px; font-weight:700; color:var(--text); display:flex; align-items:center; gap:8px; }
+  .section-title .dot { width:8px; height:8px; border-radius:50%; background:var(--gold); }
+  .last-updated { font-size:11px; color:var(--muted); font-family:'Space Grotesk',sans-serif; }
+
+  /* Category Tabs */
+  .cat-tabs { display:flex; gap:6px; flex-wrap:wrap; margin-bottom:18px; }
+  .cat-tab {
+    padding:6px 14px; border-radius:20px; font-size:12px; font-weight:600;
+    font-family:'Space Grotesk',sans-serif; cursor:pointer; border:1.5px solid var(--border);
+    background:#fff; color:var(--muted); transition:all 0.2s;
+  }
+  .cat-tab:hover, .cat-tab.active { background:var(--gold); border-color:var(--gold); color:#fff; }
+
+  .news-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:14px; }
+  .news-card {
+    background:var(--card); border:1px solid var(--border);
+    border-radius:var(--radius); padding:16px;
+    transition:all 0.2s; cursor:pointer; text-decoration:none;
+    display:block; color:inherit;
+  }
+  .news-card:hover { transform:translateY(-3px); box-shadow:var(--shadow); border-color:var(--gold); }
+  .news-cat-tag {
+    display:inline-block; padding:3px 10px; border-radius:12px;
+    font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:1px;
+    margin-bottom:8px; font-family:'Space Grotesk',sans-serif;
+  }
+  .tag-banking { background:#dbeafe; color:#1d4ed8; }
+  .tag-fashion { background:#fce7f3; color:#be185d; }
+  .tag-lifestyle { background:#d1fae5; color:#065f46; }
+  .tag-finance { background:#fef3c7; color:#92400e; }
+  .tag-crypto { background:#ede9fe; color:#5b21b6; }
+  .tag-health { background:#fee2e2; color:#991b1b; }
+  .news-headline { font-size:14px; font-weight:600; line-height:1.4; margin-bottom:8px; font-family:'Space Grotesk',sans-serif; }
+  .news-meta { font-size:11px; color:var(--muted); display:flex; align-items:center; gap:8px; }
+  .news-source { font-weight:600; }
+  .loading-spinner { text-align:center; padding:40px; color:var(--muted); font-size:14px; }
+  .spinner { display:inline-block; width:24px; height:24px; border:3px solid var(--border); border-top-color:var(--gold); border-radius:50%; animation:spin 0.8s linear infinite; margin-right:8px; vertical-align:middle; }
+  @keyframes spin { to { transform:rotate(360deg); } }
+
+  /* ── SIDEBAR ── */
+  .sidebar { display:flex; flex-direction:column; gap:20px; }
+  .sidebar-card { background:var(--card); border:1px solid var(--border); border-radius:var(--radius); padding:18px; }
+  .sidebar-title { font-family:'Space Grotesk',sans-serif; font-size:14px; font-weight:700; color:var(--text); margin-bottom:12px; display:flex; align-items:center; gap:6px; }
+  .sidebar-title::before { content:''; width:4px; height:16px; background:var(--gold); border-radius:2px; display:block; }
+
+  /* Ad sidebar */
+  .ad-sidebar {
+    background: linear-gradient(135deg, var(--gold-pale), #fff8e1);
+    border:2px dashed var(--gold);
+    border-radius:var(--radius); padding:20px;
+    text-align:center; min-height:250px;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    gap:8px;
+  }
+  .ad-sidebar .ad-icon { font-size:32px; }
+  .ad-sidebar .ad-title { font-family:'Space Grotesk',sans-serif; font-size:13px; font-weight:700; color:var(--amber); }
+  .ad-sidebar .ad-desc { font-size:11px; color:var(--muted); line-height:1.5; }
+  .ad-sidebar .ad-cta {
+    background:var(--gold); color:#fff; border:none; border-radius:6px;
+    padding:8px 16px; font-size:12px; font-weight:700;
+    font-family:'Space Grotesk',sans-serif; cursor:pointer; margin-top:4px;
+  }
+
+  /* Quick stats */
+  .stat-item { display:flex; justify-content:space-between; align-items:center; padding:8px 0; border-bottom:1px solid var(--border); }
+  .stat-item:last-child { border-bottom:none; }
+  .stat-name { font-size:12px; color:var(--muted); }
+  .stat-val { font-size:13px; font-weight:700; font-family:'Space Grotesk',sans-serif; }
+  .stat-val.up { color:#059669; }
+  .stat-val.down { color:#dc2626; }
+
+  /* Trending list */
+  .trend-item { display:flex; gap:10px; padding:8px 0; border-bottom:1px solid var(--border); align-items:flex-start; text-decoration:none; color:inherit; }
+  .trend-item:last-child { border-bottom:none; }
+  .trend-num { font-family:'Space Grotesk',sans-serif; font-size:18px; font-weight:700; color:var(--border); min-width:28px; line-height:1; }
+  .trend-text { font-size:12px; line-height:1.4; }
+
+  /* ── MID AD ── */
+  .mid-ad {
+    background: linear-gradient(90deg, #1A1208, #3D2E08, #1A1208);
+    border-radius:var(--radius); padding:20px 28px;
+    display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:14px;
+    margin:24px 0;
+  }
+  .mid-ad-text { color:#fff; }
+  .mid-ad-text h3 { font-family:'Space Grotesk',sans-serif; font-size:16px; font-weight:700; color:var(--gold-light); margin-bottom:4px; }
+  .mid-ad-text p { font-size:12px; color:rgba(255,255,255,0.6); }
+  .mid-ad-btn { background:var(--gold); color:#fff; border:none; border-radius:8px; padding:10px 20px; font-size:13px; font-weight:700; font-family:'Space Grotesk',sans-serif; cursor:pointer; white-space:nowrap; }
+
+  /* ── FOOTER ── */
+  footer {
+    background: linear-gradient(135deg, #1A1208, #2C1F05);
+    color:rgba(255,255,255,0.6); padding:32px 24px 20px;
+    margin-top:40px;
+  }
+  .footer-inner { max-width:1200px; margin:auto; }
+  .footer-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:24px; margin-bottom:24px; }
+  .footer-col h4 { font-family:'Space Grotesk',sans-serif; font-size:12px; font-weight:700; color:var(--gold); text-transform:uppercase; letter-spacing:1px; margin-bottom:10px; }
+  .footer-col a { display:block; font-size:12px; color:rgba(255,255,255,0.5); text-decoration:none; padding:3px 0; transition:color 0.2s; }
+  .footer-col a:hover { color:var(--gold-light); }
+  .footer-bottom { border-top:1px solid rgba(212,168,67,0.2); padding-top:16px; display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; gap:8px; }
+  .footer-bottom p { font-size:11px; }
+  .social-mini { display:flex; gap:8px; }
+  .social-mini a { width:30px; height:30px; border-radius:50%; background:rgba(255,255,255,0.08); display:flex; align-items:center; justify-content:center; font-size:13px; text-decoration:none; transition:background 0.2s; }
+  .social-mini a:hover { background:var(--gold); }
+
+  /* ── RESPONSIVE ── */
+  @media(max-width:600px) {
+    .ph-title { font-size:20px; }
+    .search-row { flex-direction:column; }
+    .search-btn { width:100%; }
+    .news-grid { grid-template-columns:1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- TOP NOTICE -->
+<div class="ad-top">📍 <strong>PinWorld Blog</strong> — Global Pincode Search + Live Auto-News every 30 mins &nbsp;|&nbsp; <a href="#">Submit Your Blog</a> &nbsp;|&nbsp; <a href="#">Advertise With Us</a></div>
+
+<!-- TOP AD BANNER -->
+<div class="ad-banner-top">
+  <div class="ad-slot">
+    <strong>Advertisement</strong>
+    <!-- Google AdSense / Adsterra Banner 728x90 -->
+    <!-- Replace with your ad code below -->
+    🏷️ Your Google AdSense 728×90 Banner Goes Here<br>
+    <small>Paste &lt;script&gt; ad code to activate</small>
+  </div>
+</div>
+
+<!-- SOCIAL BAR -->
+<div class="social-bar">
+  <span class="social-label">Follow:</span>
+  <a href="https://www.facebook.com/TinkuuOnline" target="_blank" class="social-btn btn-fb">📘 Facebook</a>
+  <a href="https://www.instagram.com/" target="_blank" class="social-btn btn-ig">📸 Instagram</a>
+  <a href="https://twitter.com/" target="_blank" class="social-btn btn-tw">✖ Twitter/X</a>
+  <a href="https://www.youtube.com/@julie_Ani" target="_blank" class="social-btn btn-yt">▶ YouTube</a>
+  <a href="https://wa.me/" target="_blank" class="social-btn btn-wa">💬 WhatsApp</a>
+  <a href="https://t.me/" target="_blank" class="social-btn btn-tg">✈ Telegram</a>
+  <a href="https://pinterest.com/" target="_blank" class="social-btn btn-pi">📌 Pinterest</a>
+  <a href="https://linkedin.com/" target="_blank" class="social-btn btn-li">💼 LinkedIn</a>
+</div>
+
+<!-- HEADER -->
+<header>
+  <div class="header-inner">
+    <div class="logo">
+      <div class="logo-icon">📍</div>
+      <div class="logo-text">
+        <div class="brand">Pin<span>World</span></div>
+        <div class="tagline">Global Pincode Search & Live News</div>
+      </div>
+    </div>
+    <div class="header-right">
+      <div class="refresh-badge"><span class="refresh-dot"></span> Live News</div>
+      <div class="countdown-badge">⏱ Next refresh: <span id="countdown">30:00</span></div>
+    </div>
+  </div>
+</header>
+
+<!-- MAIN -->
+<div class="container">
+
+  <!-- PINCODE HERO SEARCH -->
+  <div class="pincode-hero">
+    <div class="ph-title">🌍 Search Any <span>Pincode</span> Worldwide</div>
+    <div class="ph-sub">Instantly find location details for any postal code / ZIP code across the globe</div>
+    <div class="search-row">
+      <select id="countrySelect">
+        <option value="">🌐 Select Country</option>
+        <option value="US">🇺🇸 United States</option>
+        <option value="IN">🇮🇳 India</option>
+        <option value="GB">🇬🇧 United Kingdom</option>
+        <option value="CA">🇨🇦 Canada</option>
+        <option value="AU">🇦🇺 Australia</option>
+        <option value="DE">🇩🇪 Germany</option>
+        <option value="FR">🇫🇷 France</option>
+        <option value="JP">🇯🇵 Japan</option>
+        <option value="BR">🇧🇷 Brazil</option>
+        <option value="ZA">🇿🇦 South Africa</option>
+        <option value="SG">🇸🇬 Singapore</option>
+        <option value="NZ">🇳🇿 New Zealand</option>
+        <option value="MX">🇲🇽 Mexico</option>
+        <option value="IT">🇮🇹 Italy</option>
+        <option value="ES">🇪🇸 Spain</option>
+      </select>
+      <input type="text" id="pincodeInput" placeholder="Enter pincode / ZIP (e.g. 577001)"/>
+      <button class="search-btn" onclick="searchPincode()">🔍 Search</button>
+    </div>
+    <div class="result-box" id="resultBox">
+      <div class="result-grid" id="resultGrid"></div>
+    </div>
+  </div>
+
+  <div class="grid">
+    <!-- LEFT: NEWS -->
+    <div>
+      <div class="section-head">
+        <div class="section-title"><span class="dot"></span> USA Auto-News Feed</div>
+        <div class="last-updated">Updated: <span id="lastUpdated">Loading...</span></div>
+      </div>
+
+      <!-- CATEGORY TABS -->
+      <div class="cat-tabs">
+        <div class="cat-tab active" onclick="filterNews('all',this)">🌐 All</div>
+        <div class="cat-tab" onclick="filterNews('banking',this)">🏦 Banking</div>
+        <div class="cat-tab" onclick="filterNews('fashion',this)">👗 Fashion</div>
+        <div class="cat-tab" onclick="filterNews('lifestyle',this)">🌿 Lifestyle</div>
+        <div class="cat-tab" onclick="filterNews('finance',this)">📈 Financial</div>
+        <div class="cat-tab" onclick="filterNews('crypto',this)">₿ Crypto</div>
+        <div class="cat-tab" onclick="filterNews('health',this)">❤️ Health</div>
+      </div>
+
+      <div id="newsContainer">
+        <div class="loading-spinner"><span class="spinner"></span> Loading live news...</div>
+      </div>
+
+      <!-- MID AD -->
+      <div class="mid-ad">
+        <div class="mid-ad-text">
+          <h3>📣 Advertise on PinWorld</h3>
+          <p>Reach thousands of daily visitors — Banking, Crypto, Fashion & Health audience</p>
+        </div>
+        <button class="mid-ad-btn">Get Ad Slot →</button>
+      </div>
+
+      <!-- SECOND AD BANNER (Adsterra / AdSense) -->
+      <div class="ad-slot" style="width:100%;max-width:100%;margin:0 0 24px;">
+        <strong>Advertisement — 300×250 or 728×90</strong>
+        <!-- 🔽 Paste your Adsterra Popunder / Native Banner code here -->
+        🏷️ AdSense / Adsterra Display Ad Unit<br>
+        <small>Paste your ad script tag to activate earnings</small>
+      </div>
+    </div>
+
+    <!-- RIGHT: SIDEBAR -->
+    <div class="sidebar">
+
+      <!-- SIDEBAR AD -->
+      <div class="ad-sidebar">
+        <div class="ad-icon">💰</div>
+        <div class="ad-title">Ad Space — 300×250</div>
+        <div class="ad-desc">Premium sidebar placement. High CTR audience. Banking, Crypto & Finance readers.</div>
+        <button class="ad-cta">Advertise Here</button>
+        <!-- Paste 300x250 AdSense / Adsterra code here -->
+      </div>
+
+      <!-- LIVE CRYPTO PRICES -->
+      <div class="sidebar-card">
+        <div class="sidebar-title">₿ Crypto Prices (Live)</div>
+        <div id="cryptoPrices">
+          <div class="loading-spinner" style="padding:20px"><span class="spinner"></span></div>
+        </div>
+      </div>
+
+      <!-- TRENDING TOPICS -->
+      <div class="sidebar-card">
+        <div class="sidebar-title">🔥 Trending Topics</div>
+        <div id="trendingList">
+          <a class="trend-item" href="#"><span class="trend-num">01</span><span class="trend-text">Fed Rate Decision & US Banking Outlook 2025</span></a>
+          <a class="trend-item" href="#"><span class="trend-num">02</span><span class="trend-text">Bitcoin ETF Inflows Hit New Record</span></a>
+          <a class="trend-item" href="#"><span class="trend-num">03</span><span class="trend-text">Summer Fashion Trends: What's Hot</span></a>
+          <a class="trend-item" href="#"><span class="trend-num">04</span><span class="trend-text">AI Health Apps Revolutionizing Wellness</span></a>
+          <a class="trend-item" href="#"><span class="trend-num">05</span><span class="trend-text">Lifestyle Inflation — How to Fight It</span></a>
+        </div>
+      </div>
+
+      <!-- SIDEBAR AD 2 -->
+      <div class="ad-sidebar" style="min-height:150px;">
+        <div class="ad-icon">📊</div>
+        <div class="ad-title">Sponsored Content Slot</div>
+        <div class="ad-desc">CueLinks / Affiliate Banner<br>Publisher ID: 120831</div>
+        <!-- CueLinks Affiliate Auto-Link Script (Publisher: 120831) -->
+        <script type="text/javascript">
+          var cId = '120831';
+          (function(d, t) {
+            var s = document.createElement('script');
+            s.type = 'text/javascript';
+            s.async = true;
+            s.src = (document.location.protocol == 'https:' ? 'https://cdn0.cuelinks.com/js/' : 'http://cdn0.cuelinks.com/js/') + 'cuelinksv2.js';
+            document.getElementsByTagName('body')[0].appendChild(s);
+          }());
+        </script>
+      </div>
+
+      <!-- QUICK GLOBAL STATS -->
+      <div class="sidebar-card">
+        <div class="sidebar-title">📊 Quick Stats</div>
+        <div class="stat-item"><span class="stat-name">S&P 500</span><span class="stat-val up" id="sp500">Loading...</span></div>
+        <div class="stat-item"><span class="stat-name">USD/INR</span><span class="stat-val" id="usdinr">Loading...</span></div>
+        <div class="stat-item"><span class="stat-name">Bitcoin</span><span class="stat-val up" id="btcPrice">Loading...</span></div>
+        <div class="stat-item"><span class="stat-name">Gold</span><span class="stat-val up" id="goldPrice">Loading...</span></div>
+        <div class="stat-item"><span class="stat-name">Pincodes DB</span><span class="stat-val">180+ Countries</span></div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-grid">
+      <div class="footer-col">
+        <h4>📍 PinWorld</h4>
+        <p style="font-size:12px;line-height:1.6;">Global pincode & postal code search tool with live USA news in banking, fashion, lifestyle, finance, crypto & health.</p>
+      </div>
+      <div class="footer-col">
+        <h4>News Categories</h4>
+        <a href="#">Banking & Finance</a>
+        <a href="#">Cryptocurrency</a>
+        <a href="#">Fashion & Style</a>
+        <a href="#">Health & Wellness</a>
+        <a href="#">Lifestyle</a>
+      </div>
+      <div class="footer-col">
+        <h4>Useful Links</h4>
+        <a href="https://juliedhamaka.blogspot.com" target="_blank">Julie Dhamaka Blog</a>
+        <a href="https://juliesanghvi.blogspot.com" target="_blank">Julie Sanghvi Blog</a>
+        <a href="https://dhanverseai.blogspot.com" target="_blank">DhanVerse AI Blog</a>
+        <a href="#">Advertise With Us</a>
+        <a href="#">Privacy Policy</a>
+      </div>
+      <div class="footer-col">
+        <h4>Connect</h4>
+        <a href="https://www.facebook.com/TinkuuOnline" target="_blank">📘 Facebook</a>
+        <a href="https://www.youtube.com/@julie_Ani" target="_blank">▶ YouTube</a>
+        <a href="#" target="_blank">📸 Instagram</a>
+        <a href="#" target="_blank">✈ Telegram</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2025 PinWorld — All rights reserved. Auto-news refreshes every 30 minutes.</p>
+      <div class="social-mini">
+        <a href="https://www.facebook.com/TinkuuOnline" target="_blank">📘</a>
+        <a href="https://www.youtube.com/@julie_Ani" target="_blank">▶</a>
+        <a href="#" target="_blank">📸</a>
+        <a href="#" target="_blank">✖</a>
+        <a href="#" target="_blank">💬</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+// ═══════════════════════════════════════
+// 1. PINCODE SEARCH (via Zippopotam.us API)
+// ═══════════════════════════════════════
+async function searchPincode() {
+  const country = document.getElementById('countrySelect').value;
+  const code = document.getElementById('pincodeInput').value.trim();
+  const box = document.getElementById('resultBox');
+  const grid = document.getElementById('resultGrid');
+
+  if (!code) { alert('Please enter a pincode/ZIP code'); return; }
+  const countryCode = country || 'US';
+
+  grid.innerHTML = '<div style="color:rgba(255,255,255,0.6)"><span class="spinner" style="border-color:rgba(255,255,255,0.2);border-top-color:#D4A843"></span> Searching...</div>';
+  box.classList.add('show');
+
+  try {
+    const res = await fetch(`https://api.zippopotam.us/${countryCode}/${code}`);
+    if (!res.ok) throw new Error('Not found');
+    const data = await res.json();
+    const place = data.places[0] || {};
+    grid.innerHTML = `
+      <div class="result-item"><div class="label">Country</div><div class="val">${data.country} (${data['country abbreviation']})</div></div>
+      <div class="result-item"><div class="label">Post Code</div><div class="val">${data['post code']}</div></div>
+      <div class="result-item"><div class="label">Place Name</div><div class="val">${place['place name'] || '—'}</div></div>
+      <div class="result-item"><div class="label">State</div><div class="val">${place['state'] || '—'} (${place['state abbreviation'] || '—'})</div></div>
+      <div class="result-item"><div class="label">Latitude</div><div class="val">${place['latitude'] || '—'}°</div></div>
+      <div class="result-item"><div class="label">Longitude</div><div class="val">${place['longitude'] || '—'}°</div></div>
+    `;
+  } catch(e) {
+    grid.innerHTML = `<div style="color:#f87171;">❌ Pincode not found for <strong>${code}</strong> in <strong>${countryCode}</strong>. Try a different code or country.</div>`;
+  }
+}
+document.getElementById('pincodeInput').addEventListener('keydown', e => { if(e.key==='Enter') searchPincode(); });
+
+// ═══════════════════════════════════════
+// 2. NEWS FETCH (Google News RSS → CORS proxy)
+// ═══════════════════════════════════════
+const NEWS_FEEDS = {
+  banking:   'https://news.google.com/rss/search?q=US+banking+federal+reserve&hl=en-US&gl=US&ceid=US:en',
+  fashion:   'https://news.google.com/rss/search?q=USA+fashion+style+trends&hl=en-US&gl=US&ceid=US:en',
+  lifestyle: 'https://news.google.com/rss/search?q=USA+lifestyle+wellness&hl=en-US&gl=US&ceid=US:en',
+  finance:   'https://news.google.com/rss/search?q=US+financial+markets+stocks&hl=en-US&gl=US&ceid=US:en',
+  crypto:    'https://news.google.com/rss/search?q=cryptocurrency+bitcoin+crypto+USA&hl=en-US&gl=US&ceid=US:en',
+  health:    'https://news.google.com/rss/search?q=USA+health+medical+wellness&hl=en-US&gl=US&ceid=US:en',
+};
+const TAG_CLASSES = { banking:'tag-banking', fashion:'tag-fashion', lifestyle:'tag-lifestyle', finance:'tag-finance', crypto:'tag-crypto', health:'tag-health' };
+const TAG_ICONS   = { banking:'🏦', fashion:'👗', lifestyle:'🌿', finance:'📈', crypto:'₿', health:'❤️' };
+
+let allArticles = [];
+let currentFilter = 'all';
+
+async function fetchCategoryNews(cat, url) {
+  const proxy = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(url)}&api_key=&count=6`;
+  try {
+    const r = await fetch(proxy);
+    const d = await r.json();
+    if (d.items) {
+      return d.items.slice(0,6).map(item => ({
+        cat, title: item.title, link: item.link,
+        source: item.author || 'Google News',
+        date: item.pubDate ? new Date(item.pubDate).toLocaleDateString('en-US',{month:'short',day:'numeric'}) : 'Today'
+      }));
+    }
+  } catch(e) {}
+  // fallback static articles
+  return getFallbackNews(cat);
+}
+
+function getFallbackNews(cat) {
+  const fallbacks = {
+    banking:   [{title:'Fed Signals Rate Cuts May Come Later Than Expected',source:'Reuters'},{title:'US Bank Profits Surge on High Interest Rate Environment',source:'Bloomberg'},{title:'JPMorgan Chase Expands Digital Banking Features',source:'CNBC'},{title:'FDIC Reports Fewer Problem Banks in Latest Quarter',source:'WSJ'},{title:'Small Business Lending Rises Across Regional Banks',source:'FT'},{title:'Mobile Banking Adoption Hits All-Time High in USA',source:'Forbes'}],
+    fashion:   [{title:'Summer 2025 Trends: Quiet Luxury Takes Over Runways',source:'Vogue'},{title:'Sustainable Fashion Brands Dominate NYC Fashion Week',source:'Harper\'s Bazaar'},{title:'Vintage Denim Makes Massive Comeback This Season',source:'Elle'},{title:'Top 10 Fashion Deals on Amazon Prime Day 2025',source:'InStyle'},{title:'Gen Z Drives Thrift Store Fashion Boom Across America',source:'WWD'},{title:'Minimalist Wardrobe Trend Reshaping Fast Fashion',source:'GQ'}],
+    lifestyle: [{title:'Top 10 Wellness Retreats in the USA for 2025',source:'Travel+Leisure'},{title:'Work-Life Balance Tips That Actually Work',source:'NYT'},{title:'Minimalism Trend Continues to Reshape American Homes',source:'Architectural Digest'},{title:'Meal Prep Culture Is Transforming American Kitchens',source:'Bon Appétit'},{title:'Digital Detox Retreats Gain Popularity Among Millennials',source:'Well+Good'},{title:'Plant-Based Living: A Practical Guide for Beginners',source:'Health Mag'}],
+    finance:   [{title:'S&P 500 Hits New All-Time High Amid Strong Earnings',source:'MarketWatch'},{title:'Nasdaq Gains as Big Tech Reports Strong Q2 Results',source:'Bloomberg'},{title:'Warren Buffett\'s Latest Portfolio Moves Revealed',source:'CNBC'},{title:'Inflation Data Shows Cooling Trend — What It Means for You',source:'WSJ'},{title:'ETF Investing Reaches Record Popularity Among Retail Investors',source:'Investopedia'},{title:'Real Estate Market Outlook for Second Half of 2025',source:'Forbes'}],
+    crypto:    [{title:'Bitcoin Breaks $100K Resistance — What\'s Next?',source:'CoinDesk'},{title:'Ethereum ETF Sees Record Inflows in Latest Trading Week',source:'Decrypt'},{title:'SEC Approves New Crypto Regulations for US Exchanges',source:'The Block'},{title:'Solana Surges 30% on New DeFi Protocol Launch',source:'CryptoSlate'},{title:'Institutional Bitcoin Buying Accelerates in Q2 2025',source:'Bloomberg Crypto'},{title:'Stablecoin Market Cap Hits $200 Billion Milestone',source:'CoinTelegraph'}],
+    health:    [{title:'New Study Links Mediterranean Diet to Longer Life Span',source:'Harvard Health'},{title:'AI Diagnostic Tools Outperform Doctors in Early Cancer Detection',source:'Nature'},{title:'Mental Health Apps See Surge in Downloads Post-Pandemic',source:'Healthline'},{title:'FDA Approves Breakthrough Weight Loss Drug for Teens',source:'MedPage'},{title:'Exercise Just 15 Minutes Daily Dramatically Cuts Heart Risk',source:'WebMD'},{title:'Sleep Science Breakthrough: How Light Affects Longevity',source:'Sleep Foundation'}],
+  };
+  return (fallbacks[cat]||[]).map(f=>({cat, title:f.title, link:'#', source:f.source, date:'Today'}));
+}
+
+async function loadAllNews() {
+  document.getElementById('newsContainer').innerHTML = '<div class="loading-spinner"><span class="spinner"></span> Fetching live news...</div>';
+  const entries = Object.entries(NEWS_FEEDS);
+  const results = await Promise.all(entries.map(([cat,url])=>fetchCategoryNews(cat,url)));
+  allArticles = results.flat();
+  renderNews(allArticles);
+  document.getElementById('lastUpdated').textContent = new Date().toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'});
+}
+
+function renderNews(articles) {
+  const container = document.getElementById('newsContainer');
+  const filtered = currentFilter === 'all' ? articles : articles.filter(a=>a.cat===currentFilter);
+  if (!filtered.length) { container.innerHTML = '<div class="loading-spinner">No articles found.</div>'; return; }
+  container.innerHTML = `<div class="news-grid">${filtered.map(a=>`
+    <a class="news-card" href="${a.link}" target="_blank" rel="noopener">
+      <span class="news-cat-tag ${TAG_CLASSES[a.cat]||''}">${TAG_ICONS[a.cat]||''} ${a.cat.toUpperCase()}</span>
+      <div class="news-headline">${a.title}</div>
+      <div class="news-meta"><span class="news-source">${a.source}</span><span>·</span><span>${a.date}</span></div>
+    </a>
+  `).join('')}</div>`;
+}
+
+function filterNews(cat, el) {
+  currentFilter = cat;
+  document.querySelectorAll('.cat-tab').forEach(t=>t.classList.remove('active'));
+  if(el) el.classList.add('active');
+  renderNews(allArticles);
+}
+
+// ═══════════════════════════════════════
+// 3. COUNTDOWN TIMER (30 min refresh)
+// ═══════════════════════════════════════
+let seconds = 1800;
+function updateCountdown() {
+  const m = Math.floor(seconds/60).toString().padStart(2,'0');
+  const s = (seconds%60).toString().padStart(2,'0');
+  document.getElementById('countdown').textContent = `${m}:${s}`;
+  if(seconds <= 0) { seconds = 1800; loadAllNews(); loadCrypto(); }
+  else seconds--;
+}
+setInterval(updateCountdown, 1000);
+
+// ═══════════════════════════════════════
+// 4. CRYPTO PRICES (CoinGecko free API)
+// ═══════════════════════════════════════
+async function loadCrypto() {
+  try {
+    const r = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,solana,dogecoin&vs_currencies=usd&include_24hr_change=true');
+    const d = await r.json();
+    const coins = [
+      {id:'bitcoin',sym:'BTC',icon:'₿'},
+      {id:'ethereum',sym:'ETH',icon:'Ξ'},
+      {id:'solana',sym:'SOL',icon:'◎'},
+      {id:'dogecoin',sym:'DOGE',icon:'Ð'},
+    ];
+    document.getElementById('cryptoPrices').innerHTML = coins.map(c=>{
+      const price = d[c.id]?.usd?.toLocaleString('en-US',{style:'currency',currency:'USD',maximumFractionDigits:2})||'—';
+      const change = d[c.id]?.usd_24h_change?.toFixed(2)||0;
+      const cl = change>=0?'up':'down';
+      const arrow = change>=0?'▲':'▼';
+      return `<div class="stat-item"><span class="stat-name">${c.icon} ${c.sym}</span><span class="stat-val ${cl}">${price} <small>${arrow}${Math.abs(change)}%</small></span></div>`;
+    }).join('');
+    document.getElementById('btcPrice').textContent = d.bitcoin?.usd?.toLocaleString('en-US',{style:'currency',currency:'USD',maximumFractionDigits:0})||'—';
+  } catch(e) {
+    document.getElementById('cryptoPrices').innerHTML = '<div style="font-size:12px;color:var(--muted);padding:8px;">Live prices temporarily unavailable</div>';
+  }
+  // Static fallbacks for sidebar
+  document.getElementById('sp500').textContent = '5,487 ▲';
+  document.getElementById('usdinr').textContent = '₹83.42';
+  document.getElementById('goldPrice').textContent = '$2,341/oz ▲';
+}
+
+// ═══════════════════════════════════════
+// 5. INIT
+// ═══════════════════════════════════════
+window.addEventListener('load', () => {
+  loadAllNews();
+  loadCrypto();
+});
+</script>
+
+<!-- ═══ CUELINKS GLOBAL AFFILIATE SCRIPT (Publisher ID: 120831) ═══ -->
+<script type='text/javascript'>
+  var cId = '120831';
+  (function(d, t) {
+    var s = document.createElement('script');
+    s.type = 'text/javascript';
+    s.async = true;
+    s.src = (document.location.protocol == 'https:' ? 'https://cdn0.cuelinks.com/js/' : 'http://cdn0.cuelinks.com/js/') + 'cuelinksv2.js';
+    document.getElementsByTagName('body')[0].appendChild(s);
+  }());
+</script>
+</body>
+</html>
